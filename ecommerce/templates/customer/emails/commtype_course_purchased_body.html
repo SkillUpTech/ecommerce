@@ -8,7 +8,9 @@
         <!--/message HTML content -->
         <p>{% blocktrans %}Hi {{full_name}},{% endblocktrans %}</p>
         <br>
-        <p>{% blocktrans with course_title=course_title platform_name=platform_name %}Thank you for purchasing {{course_title}}. The charge below will appear on your next credit or debit card statement with a company name of {{platform_name}}.{% endblocktrans %}</p>
+        <p>{% blocktrans with course_title=course_title platform_name=platform_name %}Thank you for purchasing {{course_title}}. Your order number is {{ order_number }}. The charge below will appear on your next credit or debit card statement with a company name of {{platform_name}}.{% endblocktrans %}</p>
+        <br>
+        <p>Your receipt <a href={{ receipt_page_url }}>{{ receipt_page_url }}</a></p>
         <br>
         <p>{% blocktrans %}You can access your course and complete your verification (if required) on your {{platform_name}} dashboard. {% endblocktrans %} </p>
         <p>{% blocktrans %}To explore other great courses, visit the {{platform_name}} website. More courses are added every day!{% endblocktrans %}</p>

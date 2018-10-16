@@ -489,3 +489,52 @@ class EnrollmentCodeFulfillmentModule(BaseFulfillmentModule):
             },
             site=order.site
         )
+
+
+class SubscriptionFulfillmentModule(BaseFulfillmentModule):
+    def supports_line(self, line):
+        """
+        Check whether the product in line is an Subscription.
+        Args:
+            line (Line): Line to be considered.
+        Returns:
+            True if the line contains an Subscription.
+            False otherwise.
+        """
+        return line.product.is_subscription_product
+
+    def get_supported_lines(self, lines):
+        """ Return a list of lines containing Subscription products that can be fulfilled.
+        Args:
+            lines (List of Lines): Order Lines, associated with purchased products in an Order.
+        Returns:
+            A supported list of unmodified lines associated with an Subscription product.
+        """
+        return [line for line in lines if self.supports_line(line)]
+
+    def fulfill_product(self, order, lines):
+        """ Fulfills the purchase of an 'subscription' products.
+        Args:
+            order (Order): The Order associated with the lines to be fulfilled.
+            lines (List of Lines): Order Lines, associated with purchased products in an Order. These should only
+                be 'Coupon' products.
+        Returns:
+            The original set of lines, with new statuses set based on the success or failure of fulfillment.
+        """
+        logger.info("Attempting to fulfill 'Subscription' product types for order [%s]", order.number)
+
+        for line in lines:
+            line.set_status(LINE.COMPLETE)
+
+        logger.info("Finished fulfilling 'Subscription' product types for order [%s]", order.number)
+        return order, lines
+
+    def revoke_line(self, line):
+        """ Revokes the specified line.
+        Args:
+            line (Line): Order Line to be revoked.
+        Returns:
+            True, if the product is revoked; otherwise, False.
+        """
+        raise NotImplementedError("Revoke method not implemented!")
+

@@ -20,6 +20,8 @@ COUPON_PRODUCT_CLASS_NAME = 'Coupon'
 ENROLLMENT_CODE_PRODUCT_CLASS_NAME = 'Enrollment Code'
 ENROLLMENT_CODE_SWITCH = 'create_enrollment_codes'
 ENROLLMENT_CODE_SEAT_TYPES = ['verified', 'professional', 'no-id-professional']
+# Subscription product constant
+SUBSCRIPTION_PRODUCT_CLASS_NAME = 'Subscription'
 
 # Course Catalog constants
 DEFAULT_CATALOG_PAGE_SIZE = 100

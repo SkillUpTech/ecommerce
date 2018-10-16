@@ -52,7 +52,11 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
     if waffle.switch_is_active('ENABLE_NOTIFICATIONS'):
         # We do not currently support email sending for orders with more than one item.
         if len(order.lines.all()) == ORDER_LINE_COUNT:
-            product = order.lines.first().product
+            products = order.lines.all()
+            product_titles = ""
+            for product in products:
+                product_titles = product_titles + " " + product.product.title
+            #product = order.lines.first().product
 
          
             receipt_page_url = get_receipt_page_url(
@@ -64,7 +68,8 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
                  order.user,
                  'COURSE_PURCHASED',
                  {
-                            'course_title': product.title,
+                            'course_title': product_titles,
+                            'order_number': order.number,
                             'receipt_page_url': receipt_page_url,
                  },
                         order.site
