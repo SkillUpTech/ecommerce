@@ -1,0 +1,37 @@
+{% extends 'edx/base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block title %}{% trans "Courses" %}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{% static 'bower_components/pikaday/css/pikaday.css' %}" type="text/x-scss">
+{% endblock %}
+
+{% block navbar %}
+    {% include "edx/partials/_staff_navbar.html" %}
+    {% include "edx/partials/_administration_menu.html" %}
+{% endblock navbar %}
+
+{% block content %}
+    <div id="app" class="container" data-credit-providers="{{ credit_providers }}"></div>
+    <script>
+        window.bulkEnrollmentCodesEnabled = {% if bulk_enrollment_codes_enabled %}true{% else %}false{% endif %};
+    </script>
+{% endblock %}
+
+{% block footer %}
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 text-right">
+                    <em>{% blocktrans %}{{ platform_name }} Course Administration Tool{% endblocktrans %}</em>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock footer %}
+
+{% block javascript %}
+    <script src="{% static 'js/apps/course_admin_app.js' %}"></script>
+{% endblock %}
