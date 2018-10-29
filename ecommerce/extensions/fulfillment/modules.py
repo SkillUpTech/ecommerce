@@ -16,7 +16,7 @@ from requests.exceptions import ConnectionError, Timeout  # pylint: disable=ungr
 from rest_framework import status
 
 from ecommerce.core.constants import ENROLLMENT_CODE_PRODUCT_CLASS_NAME
-from ecommerce.core.url_utils import get_lms_enrollment_api_url
+from ecommerce.core.url_utils import get_lms_enrollment_api_url, get_verify_student_results_callback_url, get_subscription_package_url
 from ecommerce.courses.models import Course
 from ecommerce.courses.utils import mode_for_seat
 from ecommerce.enterprise.utils import get_or_create_enterprise_customer_user
@@ -124,6 +124,24 @@ class EnrollmentFulfillmentModule(BaseFulfillmentModule):
             headers['X-Forwarded-For'] = ip
 
         return requests.post(enrollment_api_url, data=json.dumps(data), headers=headers, timeout=timeout)
+
+    def _post_to_verify_student_results_callback_url(self, data, user):
+        verify_student_results_callback_url = get_verify_student_results_callback_url()
+        timeout = settings.ENROLLMENT_FULFILLMENT_TIMEOUT
+        headers = {
+            'Content-Type': 'application/json',
+            'X-Edx-Api-Key': settings.EDX_API_KEY
+        }
+
+        __, client_id, ip = parse_tracking_context(user)
+
+        if client_id:
+            headers['X-Edx-Ga-Client-Id'] = client_id
+
+        if ip:
+            headers['X-Forwarded-For'] = ip
+
+        return requests.post(verify_student_results_callback_url, data=json.dumps(data), headers=headers, timeout=timeout)
 
     def supports_line(self, line):
         return line.product.is_seat_product
@@ -257,6 +275,12 @@ class EnrollmentFulfillmentModule(BaseFulfillmentModule):
                         line.id, order.number, response.status_code, reason
                     )
                     line.set_status(LINE.FULFILLMENT_SERVER_ERROR)
+
+                verify_user_data = {'user': order.user.username}
+                res = self._post_to_verify_student_results_callback_url(verify_user_data, user=order.user)
+                if not res.status_code == status.HTTP_200_OK:
+                    logger.error("Unable to post verify student data")
+               
             except ConnectionError:
                 logger.error(
                     "Unable to fulfill line [%d] of order [%s] due to a network problem", line.id, order.number
@@ -492,6 +516,24 @@ class EnrollmentCodeFulfillmentModule(BaseFulfillmentModule):
 
 
 class SubscriptionFulfillmentModule(BaseFulfillmentModule):
+    def _post_to_subscription_package_url(self, data, user):
+        subscription_package_url = get_subscription_package_url()
+        timeout = settings.ENROLLMENT_FULFILLMENT_TIMEOUT
+        headers = {
+            'Content-Type': 'application/json',
+            'X-Edx-Api-Key': settings.EDX_API_KEY
+        }
+
+        __, client_id, ip = parse_tracking_context(user)
+
+        if client_id:
+            headers['X-Edx-Ga-Client-Id'] = client_id
+
+        if ip:
+            headers['X-Forwarded-For'] = ip
+
+        return requests.post(subscription_package_url, data=json.dumps(data), headers=headers, timeout=timeout)
+
     def supports_line(self, line):
         """
         Check whether the product in line is an Subscription.
@@ -522,8 +564,13 @@ class SubscriptionFulfillmentModule(BaseFulfillmentModule):
             The original set of lines, with new statuses set based on the success or failure of fulfillment.
         """
         logger.info("Attempting to fulfill 'Subscription' product types for order [%s]", order.number)
+        course_key = order.lines.first().product.attr.course_key
 
         for line in lines:
+            subscription_package_data = {'user': order.user.username, 'course_id': course_key, 'sku': line.stockrecord.partner_sku}
+            subs_res = self._post_to_subscription_package_url(subscription_package_data, user=order.user)
+            if not subs_res.status_code == status.HTTP_200_OK:
+                logger.error("Unable to post subscription package data")
             line.set_status(LINE.COMPLETE)
 
         logger.info("Finished fulfilling 'Subscription' product types for order [%s]", order.number)
