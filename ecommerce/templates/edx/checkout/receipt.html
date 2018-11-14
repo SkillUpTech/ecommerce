@@ -74,7 +74,31 @@
               <dt aria-hidden="true">{% trans "Description" %}</dt>
               <dt aria-hidden="true">{% trans "Item Price" %}</dt>
             </div>
+           {% if order.lines.all.count > 1%}
             {% for line in order.lines.all %}
+              <div class="order-line-data">
+               {% if line.product.course %}
+                <dt class="quantity sr">{% trans "Quantity:" %}</dt>
+                <dd class="quantity"></dd>
+                <dt class="course-description sr">{% trans "Description:" %}</dt>
+                <dd class="course-description">
+                  <span>{{ line.description }}</span>
+                  <p>{{ line.product.course.id|course_organization }}</p>
+                </dd>
+                <dt class="line-price sr">{% trans "Item Price:" %}</dt>
+                <dd class="line-price price"></dd>
+                {% else %}
+                   <dt class="quantity sr">{% trans "Quantity:" %}</dt>
+                   <dd class="quantity">{{ line.quantity }}</dd>
+                   <dt class="course-description sr">{% trans "Description:" %}</dt>
+                   <dd class="course-description"><span>{{ line.description }}</span></dd>
+                   <dt class="line-price sr">{% trans "Item Price:" %}</dt>
+                   <dd class="line-price price">{{ line.line_price_before_discounts_incl_tax|currency:order.currency }}</dd>
+                {% endif %}
+              </div>
+            {% endfor %}
+           {% else %}
+             {% for line in order.lines.all %}
               <div class="order-line-data">
                 <dt class="quantity sr">{% trans "Quantity:" %}</dt>
                 <dd class="quantity">{{ line.quantity }}</dd>
@@ -89,6 +113,7 @@
                 <dd class="line-price price">{{ line.line_price_before_discounts_incl_tax|currency:order.currency }}</dd>
               </div>
             {% endfor %}
+           {% endif %}
           </dl>
           <div class="order-total">
             <div class="description">{% trans "Subtotal" %}</div>
