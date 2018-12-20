@@ -56,6 +56,7 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
             product_titles = ""
             for product in products:
                 product_titles = product_titles + " " + product.product.title
+                pro = product_titles.replace('(and ID verification)','')
             #product = order.lines.first().product
 
          
@@ -68,7 +69,7 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
                  order.user,
                  'COURSE_PURCHASED',
                  {
-                            'course_title': product_titles,
+                            'course_title': pro,
                             'order_number': order.number,
                             'receipt_page_url': receipt_page_url,
                  },
