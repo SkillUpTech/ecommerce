@@ -8,6 +8,7 @@ from ecommerce.courses.utils import mode_for_seat
 from ecommerce.extensions.analytics.utils import silence_exceptions, track_segment_event
 from ecommerce.extensions.checkout.utils import get_credit_provider_details, get_receipt_page_url
 from ecommerce.notifications.notifications import send_notification
+from ecommerce.voucher_code.models import VoucherCode, VoucherPurchase
 
 logger = logging.getLogger(__name__)
 post_checkout = get_class('checkout.signals', 'post_checkout')
@@ -44,7 +45,6 @@ def track_completed_order(sender, order=None, **kwargs):  # pylint: disable=unus
     }
     track_segment_event(order.site, order.user, 'Order Completed', properties)
 
-
 @receiver(post_checkout, dispatch_uid='send_completed_order_email')
 @silence_exceptions("Failed to send order completion email.")
 def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable=unused-argument
@@ -53,36 +53,36 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
         # We do not currently support email sending for orders with more than one item.
         if len(order.lines.all()) == ORDER_LINE_COUNT:
             product = order.lines.first().product
-            credit_provider_id = getattr(product.attr, 'credit_provider', None)
-            if not credit_provider_id:
-                logger.error(
-                    'Failed to send credit receipt notification. Credit seat product [%s] has no provider.', product.id
-                )
-                return
-            elif product.is_seat_product:
-                provider_data = get_credit_provider_details(
-                    access_token=order.site.siteconfiguration.access_token,
-                    credit_provider_id=credit_provider_id,
-                    site_configuration=order.site.siteconfiguration
-                )
+            voucher_code = None
+            voucher_expiration_date = None
+            try:
+                voucher_code_obj =  VoucherCode.objects.filter(is_available=True)[:1].get()
+                voucher_code = voucher_code_obj.voucher
+                voucher_expiration_date = voucher_code_obj.expiration_date
+                voucher_code_obj.is_available = False
+                voucher_code_obj.save()
+                voucher_purchase_obj = VoucherPurchase()
+                voucher_purchase_obj.voucher = voucher_code_obj
+                voucher_purchase_obj.given_to = order.user.email
+                voucher_purchase_obj.save()
+            except:
+                logger.info('Voucher code not available') 
+            receipt_page_url = get_receipt_page_url(
+                order_number=order.number,
+                site_configuration=order.site.siteconfiguration
+            )
 
-                receipt_page_url = get_receipt_page_url(
-                    order_number=order.number,
-                    site_configuration=order.site.siteconfiguration
-                )
-
-                if provider_data:
-                    send_notification(
-                        order.user,
-                        'CREDIT_RECEIPT',
-                        {
+            send_notification(
+                 order.user,
+                 'COURSE_PURCHASED',
+                 {
+                            'voucher_code': voucher_code,
+                            'voucher_expiration_date': voucher_expiration_date,
                             'course_title': product.title,
                             'receipt_page_url': receipt_page_url,
-                            'credit_hours': product.attr.credit_hours,
-                            'credit_provider': provider_data['display_name'],
-                        },
+                 },
                         order.site
-                    )
+               )
 
         else:
             logger.info('Currently support receipt emails for order with one item.')

@@ -283,6 +283,7 @@ DJANGO_APPS = [
 LOCAL_APPS = [
     'ecommerce.core',
     'ecommerce.coupons',
+    'ecommerce.voucher_code',
     'ecommerce.courses',
     'ecommerce.invoice',
     'ecommerce.programs',
