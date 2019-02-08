@@ -6,7 +6,7 @@ class VoucherCodeAdmin(admin.ModelAdmin):
     list_display = ('voucher', 'expiration_date' ,'is_available')
 
 class VoucherPurchaseAdmin(admin.ModelAdmin):
-    list_display = ('voucher', 'given_to')
+    list_display = ('voucher', 'given_to', 'product_title')
 
 
 admin.site.register(VoucherCode, VoucherCodeAdmin)

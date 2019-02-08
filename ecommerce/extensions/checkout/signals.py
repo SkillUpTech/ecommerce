@@ -53,36 +53,38 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
         # We do not currently support email sending for orders with more than one item.
         if len(order.lines.all()) == ORDER_LINE_COUNT:
             product = order.lines.first().product
-            voucher_code = None
-            voucher_expiration_date = None
-            try:
-                voucher_code_obj =  VoucherCode.objects.filter(is_available=True)[:1].get()
-                voucher_code = voucher_code_obj.voucher
-                voucher_expiration_date = voucher_code_obj.expiration_date
-                voucher_code_obj.is_available = False
-                voucher_code_obj.save()
-                voucher_purchase_obj = VoucherPurchase()
-                voucher_purchase_obj.voucher = voucher_code_obj
-                voucher_purchase_obj.given_to = order.user.email
-                voucher_purchase_obj.save()
-            except:
-                logger.info('Voucher code not available') 
-            receipt_page_url = get_receipt_page_url(
-                order_number=order.number,
-                site_configuration=order.site.siteconfiguration
-            )
+            if product.is_seat_product:
+                voucher_code = None
+                voucher_expiration_date = None
+                try:
+                    voucher_code_obj =  VoucherCode.objects.filter(is_available=True)[:1].get()
+                    voucher_code = voucher_code_obj.voucher
+                    voucher_expiration_date = voucher_code_obj.expiration_date
+                    voucher_code_obj.is_available = False
+                    voucher_code_obj.save()
+                    voucher_purchase_obj = VoucherPurchase()
+                    voucher_purchase_obj.voucher = voucher_code_obj
+                    voucher_purchase_obj.given_to = order.user.email
+                    voucher_purchase_obj.product_title = product.title
+                    voucher_purchase_obj.save()
+                except:
+                    logger.info('Voucher code not available') 
+                receipt_page_url = get_receipt_page_url(
+                    order_number=order.number,
+                    site_configuration=order.site.siteconfiguration
+               )
 
-            send_notification(
-                 order.user,
-                 'COURSE_PURCHASED',
-                 {
+                send_notification(
+                     order.user,
+                     'COURSE_PURCHASED',
+                     {
                             'voucher_code': voucher_code,
                             'voucher_expiration_date': voucher_expiration_date,
                             'course_title': product.title,
                             'receipt_page_url': receipt_page_url,
-                 },
+                    },
                         order.site
-               )
-
+                 )
+            
         else:
             logger.info('Currently support receipt emails for order with one item.')

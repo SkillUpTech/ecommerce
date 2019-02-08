@@ -13,6 +13,7 @@ class VoucherCode(models.Model):
 class VoucherPurchase(models.Model):
     voucher = models.ForeignKey(VoucherCode)
     given_to = models.CharField(max_length=100, unique=False, null=False)
+    product_title = models.CharField(max_length=500, unique=False)
     class Meta(object):
         app_label = "voucher_code"
     def __unicode__(self):
