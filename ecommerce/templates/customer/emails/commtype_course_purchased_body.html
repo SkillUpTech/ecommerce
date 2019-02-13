@@ -2,38 +2,39 @@
 {% load i18n %}
 {% block body %}
 <!-- Message Body -->
+
 <tr>
     <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 13px; line-height: 20px; font-family: Open Sans, sans-serif; color: #333; border-radius: 5px;" align="left">
         <br>
         <!--/message HTML content -->
-        <p>{% blocktrans %}Hi {{full_name}},{% endblocktrans %}</p>
+        <p>{% blocktrans %}Greetings {{full_name}},{% endblocktrans %}</p>
         <br>
-        <p>{% blocktrans with course_title=course_title platform_name=platform_name %}Thank you for purchasing {{course_title}}. The charge below will appear on your next credit or debit card statement with a company name of {{platform_name}}.{% endblocktrans %}</p>
+        <p>{% blocktrans with course_title=course_title platform_name=platform_name %}Thank you for enrolling in {{course_title}}. You are on your way to enhancing your skill set!{% endblocktrans %}</p>
         <br>
         <p>Voucher Code: {{ voucher_code }}</p>
         <p>Voucher Code Expiry date: {{ voucher_expiration_date }}</p>
         <br>
-        <p>{% blocktrans %}You can access your course and complete your verification (if required) on your {{platform_name}} dashboard. {% endblocktrans %} </p>
-        <p>{% blocktrans %}To explore other great courses, visit the {{platform_name}} website. More courses are added every day!{% endblocktrans %}</p>
+        <p>{% blocktrans %}We know carving out time for training can be a challenge, but with all of the courses available on-demand, you can learn
+and progress at your own pace!. {% endblocktrans %} </p>
+        <p>{% blocktrans %}To complete your course or register for additional courses, please login here: https://learn.directions.training.
+If you need assistance, please email {{support_email}}.training.To schedule your 1 hour of instructor training, please contact us at {{support_email}} {% endblocktrans %}</p>
         <br>
-        <p>{% trans "Thank you. We hope you enjoy the course!" %}</p>
-        <p>{% blocktrans %}{{platform_name}} team {% endblocktrans %}</p>
+        <p>{% trans "Best regards," %}</p>
+        <p>{% blocktrans %} Directions Training’s Learning as a Service Team {% endblocktrans %}</p>
         <!--/message HTML content -->
         <br><br>
     </td>
 </tr>
 
-<tr>
+<!-- <tr>
     <td class="footer-padding" style="padding-left: 30px; padding-right: 30px; font-size: 13px; line-height: 20px; font-family: Open Sans, sans-serif; color: #002D40; background-color: #f3f3f3;" align="left">
-        <!--footer content -->
+        
         <br>
         <p>{% blocktrans with course_title=course_title platform_name=platform_name %}You are receiving this email because you purchased a seat in the {{platform_name}} course {{course_title}}.{% endblocktrans %}</p>
         <br>
-        <!--/ end footer content -->
+        
     </td>
-</tr>
+</tr> -->
 <!--/100% wrapper-->
 <br>
 <br>
-{% endblock body %}
-

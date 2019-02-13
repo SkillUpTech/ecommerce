@@ -9,6 +9,7 @@ from ecommerce.extensions.analytics.utils import silence_exceptions, track_segme
 from ecommerce.extensions.checkout.utils import get_credit_provider_details, get_receipt_page_url
 from ecommerce.notifications.notifications import send_notification
 from ecommerce.voucher_code.models import VoucherCode, VoucherPurchase
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 post_checkout = get_class('checkout.signals', 'post_checkout')
@@ -50,9 +51,10 @@ def track_completed_order(sender, order=None, **kwargs):  # pylint: disable=unus
 def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable=unused-argument
     """Send course purchase notification email when a course is purchased."""
     if waffle.switch_is_active('ENABLE_NOTIFICATIONS'):
-        # We do not currently support email sending for orders with more than one item.
+        # We do not currently support email sending for orders with more than one item..
         if len(order.lines.all()) == ORDER_LINE_COUNT:
             product = order.lines.first().product
+            title = product.title.replace("in Seat","").replace("(and ID verification)","")
             if product.is_seat_product:
                 voucher_code = None
                 voucher_expiration_date = None
@@ -80,8 +82,9 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
                      {
                             'voucher_code': voucher_code,
                             'voucher_expiration_date': voucher_expiration_date,
-                            'course_title': product.title,
+                            'course_title': title,
                             'receipt_page_url': receipt_page_url,
+                            'support_email':settings.SUPPORT_EMAIL
                     },
                         order.site
                  )
