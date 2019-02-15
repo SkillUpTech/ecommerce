@@ -96,6 +96,7 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
                      {
                             'student': order.user.get_full_name(),
                             'course_title': title,
+                            'order_date': order.date_placed,
                             'contact_email': order.user.email
                     },
                         order.site

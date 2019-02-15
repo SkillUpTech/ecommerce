@@ -12,7 +12,10 @@
         <br>
         <p>Student: {{ student }}</p>
         <p>Contact Email: {{ contact_email }}</p>
-        <p>Items purchased: {{ course_title }}</p>
+        <p>Date Purchased: {{ order_date|date:"E d, Y" }} </p>
+        <p>Items purchased: </p>
+        &nbsp;&nbsp;<p>Class/Course: {{ course_title }}</p>
+        &nbsp;&nbsp;<p>Instructor support and certificate add-on: Yes</p>
         <br>
         <p>{% blocktrans %}Please coordinate any purchased instructor support with the student and appropriate instructor. {% endblocktrans %} </p>
         <!--/message HTML content -->
