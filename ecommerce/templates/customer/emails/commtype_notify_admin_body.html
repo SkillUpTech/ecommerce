@@ -5,17 +5,17 @@
 
 <tr>
     <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 13px; line-height: 20px; font-family: Open Sans, sans-serif; color: #333; border-radius: 5px;" align="left">
-        <br>
         <!--/message HTML content -->
         <p>{% blocktrans %}A student has registered for a course via {{platform_name}},{% endblocktrans %}</p>
         <br>
-        <br>
-        <p>Student: {{ student }}</p>
-        <p>Contact Email: {{ contact_email }}</p>
-        <p>Date Purchased: {{ order_date|date:"E d, Y" }} </p>
-        <p>Items purchased: </p>
-        &nbsp;&nbsp;<p>Class/Course: {{ course_title }}</p>
-        &nbsp;&nbsp;<p>Instructor support and certificate add-on: Yes</p>
+        <pre>
+        Student: {{ student }}
+        Contact Email: {{ contact_email }}
+        Date Purchased: {{ order_date|date:"E d, Y" }} 
+        Items purchased: 
+                  Class/Course: {{ course_title }}
+                  Instructor support and certificate add-on: Yes
+        </pre>
         <br>
         <p>{% blocktrans %}Please coordinate any purchased instructor support with the student and appropriate instructor. {% endblocktrans %} </p>
         <!--/message HTML content -->

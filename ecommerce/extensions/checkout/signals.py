@@ -55,7 +55,8 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
         # We do not currently support email sending for orders with more than one item..
         if len(order.lines.all()) == ORDER_LINE_COUNT:
             product = order.lines.first().product
-            title = product.title.replace("in Seat","").replace("(and ID verification)","")
+            title = product.title.replace("Seat in","").replace("(and ID verification)","")
+            title = title.replace("with verified certificate","")
             if product.is_seat_product:
                 voucher_code = None
                 voucher_expiration_date = None
