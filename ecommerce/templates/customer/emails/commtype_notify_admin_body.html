@@ -1,0 +1,23 @@
+{% extends 'customer/email_base.html' %}
+{% load i18n %}
+{% block body %}
+<!-- Message Body -->
+
+<tr>
+    <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 13px; line-height: 20px; font-family: Open Sans, sans-serif; color: #333; border-radius: 5px;" align="left">
+        <br>
+        <!--/message HTML content -->
+        <p>{% blocktrans %}A student has registered for a course via {{platform_name}},{% endblocktrans %}</p>
+        <br>
+        <br>
+        <p>Student: {{ student }}</p>
+        <p>Contact Email: {{ contact_email }}</p>
+        <p>Items purchased: {{ course_title }}</p>
+        <br>
+        <p>{% blocktrans %}Please coordinate any purchased instructor support with the student and appropriate instructor. {% endblocktrans %} </p>
+        <!--/message HTML content -->
+        <br><br>
+    </td>
+</tr>
+<br>
+{% endblock body %}

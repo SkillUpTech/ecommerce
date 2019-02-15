@@ -3,6 +3,7 @@ import logging
 import waffle
 from django.dispatch import receiver
 from oscar.core.loading import get_class
+from ecommerce.core.models import User
 
 from ecommerce.courses.utils import mode_for_seat
 from ecommerce.extensions.analytics.utils import silence_exceptions, track_segment_event
@@ -88,6 +89,17 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
                     },
                         order.site
                  )
+                support_user = User.objects.get(email=settings.SUPPORT_EMAIL)
+                send_notification(
+                    support_user,
+                    'NOTIFY_ADMIN',
+                     {
+                            'student': order.user.get_full_name(),
+                            'course_title': title,
+                            'contact_email': order.user.email
+                    },
+                        order.site
+                )
             
         else:
             logger.info('Currently support receipt emails for order with one item.')
