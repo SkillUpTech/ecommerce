@@ -8,16 +8,13 @@
         <br>
         <!--/message HTML content -->
         <p>{% blocktrans %}Greetings {{full_name}},{% endblocktrans %}</p>
-        <br>
         <p>{% blocktrans with course_title=course_title platform_name=platform_name %}Thank you for enrolling in {{course_title}}. You are on your way to enhancing your skill set!{% endblocktrans %}</p>
-        <br>
         <p>Voucher Code: {{ voucher_code }}</p>
         <p>Voucher Code Expiry date: {{ voucher_expiration_date }}</p>
-        <br>
         <p>{% blocktrans %}We know carving out time for training can be a challenge, but with all of the courses available on-demand, you can learn
 and progress at your own pace!. {% endblocktrans %} </p>
         <p>{% blocktrans %}To complete your course or register for additional courses, please login here: https://learn.directions.training.
-If you need assistance, please email {{support_email}}.training.To schedule your 1 hour of instructor training, please contact us at {{support_email}} {% endblocktrans %}</p>
+If you need assistance, please email {{support_email}}. To schedule your 1 hour of instructor training, please contact us at {{support_email}} {% endblocktrans %}</p>
         <br>
         <p>{% trans "Best regards," %}</p>
         <p>{% blocktrans %} Directions Training’s Learning as a Service Team {% endblocktrans %}</p>
