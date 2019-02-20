@@ -61,7 +61,8 @@ def send_course_purchase_email(sender, order=None, **kwargs):  # pylint: disable
                 voucher_code = None
                 voucher_expiration_date = None
                 try:
-                    voucher_code_obj =  VoucherCode.objects.filter(is_available=True)[:1].get()
+                    voucher_codes = VoucherCode.objects.filter(is_available=True).order_by('-expiration_date')
+                    voucher_code_obj = voucher_codes.reverse()[0]
                     voucher_code = voucher_code_obj.voucher
                     voucher_expiration_date = voucher_code_obj.expiration_date
                     voucher_code_obj.is_available = False
