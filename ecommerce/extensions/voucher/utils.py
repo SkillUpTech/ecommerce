@@ -101,6 +101,9 @@ def _get_info_for_coupon_report(coupon, voucher):
     offer_range = offer.condition.range
     program_uuid = offer.condition.program_uuid
     benefit = offer.benefit
+    course_id = None
+    catalog_query = None
+    course_seat_types = None
 
     if program_uuid:
         course_id = None
