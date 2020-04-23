@@ -1,2 +1,2 @@
 {% load i18n %}
-{% trans "Order Placed at SkillUp Online" %}
+{% trans "Order Placed at SkillUp Online" %} - {{course_title}}
