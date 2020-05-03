@@ -564,7 +564,11 @@ class SubscriptionFulfillmentModule(BaseFulfillmentModule):
             The original set of lines, with new statuses set based on the success or failure of fulfillment.
         """
         logger.info("Attempting to fulfill 'Subscription' product types for order [%s]", order.number)
-        course_key = order.lines.first().product.attr.course_key
+        course_key = ""
+        try:
+            course_key = order.lines.first().product.attr.course_key
+        except:
+            course_key = order.lines.last().product.attr.course_key
 
         for line in lines:
             subscription_package_data = {'user': order.user.username, 'course_id': course_key, 'sku': line.stockrecord.partner_sku}
